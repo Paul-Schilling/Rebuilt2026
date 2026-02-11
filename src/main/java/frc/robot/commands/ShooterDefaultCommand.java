@@ -17,7 +17,7 @@ public class ShooterDefaultCommand extends Command {
         shooter.start();
     }
     
-    public void end (boolean isImterupted) {
+    public void end (boolean isInterupted) {
         shooter.stop();
     }
 }

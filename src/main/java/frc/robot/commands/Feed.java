@@ -15,7 +15,7 @@ public class Feed extends Command {
         feeder.feed();
     }
     
-    public void end (boolean isImterupted) {
+    public void end (boolean isInterupted) {
         feeder.stop();
     }
 

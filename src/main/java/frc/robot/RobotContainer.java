@@ -21,10 +21,14 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Feed;
+import frc.robot.commands.RollerCommand;
 import frc.robot.commands.ShooterDefaultCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Rollers;
 import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
@@ -46,17 +50,19 @@ public class RobotContainer {
     private final CommandXboxController shooterController = new CommandXboxController(1);
 
 
-    private CommandSwerveDrivetrain drivetrain;
+    public CommandSwerveDrivetrain drivetrain;
     private Shooter shooter;
     private Feeder feeder;
+    private Rollers rollers;
+    private Intake intake;
 
 
     /* Path follower */
-    private final SendableChooser<Command> autoChooser;
+   // private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
+      //  autoChooser = AutoBuilder.buildAutoChooser("Tests");
+    //    SmartDashboard.putData("Auto Mode", autoChooser);
         InitializeSubsystems();
         configureBindings();
 
@@ -110,7 +116,8 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         /* Run the path selected from the auto chooser */
-        return autoChooser.getSelected();
+        //return autoChooser.getSelected();
+        return null;
     }
 
     private void InitializeSubsystems() {
@@ -122,18 +129,36 @@ public class RobotContainer {
 
         try {
             shooter = new Shooter();
-            ShooterDefaultCommand cmd = new ShooterDefaultCommand(shooter);
-            shooter.setDefaultCommand(cmd);
+            ShooterDefaultCommand shooterCmd = new ShooterDefaultCommand(shooter);
+            shooter.setDefaultCommand(shooterCmd);
         } catch(Throwable error) {
             System.out.println(error.getMessage());
         }
 
         try {
             feeder = new Feeder();
-            Feed cmd = new Feed(feeder);
-            shooterController.a().whileTrue(cmd);
         } catch(Throwable error) {
             System.out.println(error.getMessage());
+        }
+        try {
+            rollers = new Rollers();
+        } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        try {
+            intake = new Intake();
+        } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        if (rollers != null && feeder != null) {
+            Feed feederCmd = new Feed(feeder);
+            RollerCommand rollerCmd = new RollerCommand(rollers);
+            shooterController.leftTrigger().whileTrue(feederCmd.alongWith(rollerCmd));
+        } 
+        if (intake != null && rollers != null) {
+            IntakeCommand intakeCmd = new IntakeCommand(intake);
+            RollerCommand rollerCmd = new RollerCommand(rollers);
+            shooterController.rightBumper().whileTrue(intakeCmd.alongWith(rollerCmd));
         }
     }
 }
