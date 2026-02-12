@@ -6,12 +6,13 @@ public class Constants {
     public class ShooterConstants {
 
         // TODO: replace motor1canID and motor2canID with the actual values.
-        public static int leftShooterMotorcanID = 21;
-        public static int rightShooterMotorcanID = 22;
+        public static int motor1CanId = 21;
+        public static int motor2CanId = 22;
         public static double kP = 0.0;
         public static double kI = 0.0;
         public static double kD = 0.0;
         public static double kFF = 0.00015;
+        public static double setPoint = 500.0;
     }
 
     public class FeederConstants {
