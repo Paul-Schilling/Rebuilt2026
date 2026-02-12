@@ -28,6 +28,21 @@ public class Constants {
         public static int intakeCanId = 28;
     }
 
-    
+    public class IntakeDeployerConstants {
+        public static int deployerCanId = 30;
+        public static double kP = 0.0;
+        public static double kI = 0.0;
+        public static double kD = 0.0;
+        public static double kFF = 0.00015;
+        public static double upSetPoint = 0.25;
+        public static double downSetPoint = 0.50;
+        public static double kG = 0.0;
+        public static double kV = 0.0;
+        public static double kA = 0.0;
+        public static double extendedLimit = 0.6;
+        public static double retractLimit = 0.25;
+        public static double extendSpeed = 0.25;
+        public static double retractSpeed = 0.25;
+    }
 
 }

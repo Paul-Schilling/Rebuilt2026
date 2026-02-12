@@ -24,10 +24,12 @@ import frc.robot.commands.Feed;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.ShooterDefaultCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeDeployerDefaultCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeDeployer;
 import frc.robot.subsystems.Rollers;
 import frc.robot.subsystems.Shooter;
 
@@ -55,6 +57,7 @@ public class RobotContainer {
     private Feeder feeder;
     private Rollers rollers;
     private Intake intake;
+    private IntakeDeployer intakeDeployer;
 
 
     /* Path follower */
@@ -148,6 +151,12 @@ public class RobotContainer {
         try {
             intake = new Intake();
         } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        try {
+            intakeDeployer = new IntakeDeployer();  
+            intakeDeployer.setDefaultCommand(new IntakeDeployerDefaultCommand(intakeDeployer, shooterController));
+        } catch(Throwable error){
             System.out.println(error.getMessage());
         }
         if (rollers != null && feeder != null) {
