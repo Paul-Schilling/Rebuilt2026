@@ -25,6 +25,7 @@ import frc.robot.commands.RollerCommand;
 import frc.robot.commands.ShooterDefaultCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeDeployerDefaultCommand;
+import frc.robot.commands.IntakeExtend;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -156,6 +157,8 @@ public class RobotContainer {
         try {
             intakeDeployer = new IntakeDeployer();  
             intakeDeployer.setDefaultCommand(new IntakeDeployerDefaultCommand(intakeDeployer, shooterController));
+            //shooterController.a().onTrue();
+            //shooterController.b().onTrue(getAutonomousCommand());
         } catch(Throwable error){
             System.out.println(error.getMessage());
         }
@@ -169,5 +172,6 @@ public class RobotContainer {
             RollerCommand rollerCmd = new RollerCommand(rollers);
             shooterController.rightBumper().whileTrue(intakeCmd.alongWith(rollerCmd));
         }
+
     }
 }

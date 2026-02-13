@@ -12,7 +12,7 @@ public class Constants {
         public static double kI = 0.0;
         public static double kD = 0.0;
         public static double kFF = 0.00015;
-        public static double setPoint = 500.0;
+        public static double setPoint = 3000.0;
     }
 
     public class FeederConstants {
