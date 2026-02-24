@@ -34,8 +34,8 @@ public class IntakeDeployer extends SubsystemBase{
         motorConfig.closedLoop.pid(kP, kI, kD);
         motorConfig.closedLoop.outputRange(-.5, .5);
         motorConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-        motorConfig.softLimit.reverseSoftLimit(extendedLimit);
-        motorConfig.softLimit.forwardSoftLimit(retractLimit);
+        motorConfig.absoluteEncoder.inverted(true);
+        motorConfig.inverted(true);
         deployMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         SmartDashboard.putNumber("Intake Deployer P", mP);
@@ -53,13 +53,14 @@ public class IntakeDeployer extends SubsystemBase{
 
     public void runToExtendedPosition() {
         double feedforward = ff.calculate(downState.position*2*Math.PI, downState.velocity);
-        deployMotor.getClosedLoopController().setSetpoint(downState.position, ControlType.kPosition, 
+        deployMotor.getClosedLoopController().setSetpoint(downSetPoint, ControlType.kPosition, 
                                                                     ClosedLoopSlot.kSlot0, feedforward);
+        SmartDashboard.putNumber("Feed Forward Calculated",feedforward);
     }
 
     public void runToRetractedPosition() {
         double feedforward = ff.calculate(upState.position*2*Math.PI, upState.velocity);
-        deployMotor.getClosedLoopController().setSetpoint(upState.position, ControlType.kPosition, 
+        deployMotor.getClosedLoopController().setSetpoint(upSetPoint, ControlType.kPosition, 
                                                                     ClosedLoopSlot.kSlot0, feedforward);
     }
 

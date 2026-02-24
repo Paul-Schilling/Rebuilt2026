@@ -27,6 +27,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeDeployerDefaultCommand;
 import frc.robot.commands.IntakeExtend;
 import frc.robot.commands.IntakeRetract;
+import frc.robot.commands.ResetManualIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -121,7 +122,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
 
@@ -151,8 +151,9 @@ public class RobotContainer {
         try {
             intakeDeployer = new IntakeDeployer();  
             intakeDeployer.setDefaultCommand(new IntakeDeployerDefaultCommand(intakeDeployer, shooterController));
-            shooterController.rightBumper().onTrue(new IntakeExtend(intakeDeployer).withTimeout(5));
-            shooterController.leftBumper().onTrue(new IntakeRetract(intakeDeployer).withTimeout(5));
+            shooterController.rightBumper().onTrue(new IntakeExtend(intakeDeployer));
+            shooterController.leftBumper().onTrue(new IntakeRetract(intakeDeployer));
+            shooterController.leftStick().onTrue(new ResetManualIntake(intakeDeployer));
         } catch(Throwable error){
             System.out.println(error.getMessage());
         }

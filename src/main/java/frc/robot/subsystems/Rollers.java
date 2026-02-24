@@ -23,7 +23,7 @@ public class Rollers extends SubsystemBase {
         this.mI = kI;
         this.mD = kD;
         this.mFF = kFF;
-        rollerMotorConfig = createConfigurationForVelocity(false);
+        rollerMotorConfig = createConfigurationForVelocity(true);
         rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         SmartDashboard.putNumber("roller P", mP);

@@ -58,13 +58,13 @@ public class Constants {
         public static double kP = 2.16;
         public static double kI = 0.0;
         public static double kD = 0.01;
-        public static double upSetPoint = 0.5;
-        public static double downSetPoint = 0.8;
+        public static double upSetPoint = 0.02;
+        public static double downSetPoint = 0.30;
         public static double kG = 0.16;
         public static double kV = 6.33;
         public static double kA = 0.02;
-        public static double extendedLimit = 0.6;
-        public static double retractLimit = 0.35;
+        public static double extendedLimit = 0.32;
+        public static double retractLimit = 0.01;
         public static double extendSpeed = -0.1;
         public static double retractSpeed = 0.1;
     }
@@ -76,6 +76,6 @@ public class Constants {
         public static final AprilTagFieldLayout tagLayout =
                 AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
         public static final Transform3d robotToCam = new Transform3d(distanceToFrontX, distanceFromLeftY, distanceFromFloorZ, new Rotation3d(0,0,0));
-        public static final boolean useVision = true;
+        public static final boolean useVision = false;
     }
 }

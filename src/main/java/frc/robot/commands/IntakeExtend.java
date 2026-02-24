@@ -9,10 +9,11 @@ public class IntakeExtend extends Command{
     
     public IntakeExtend(IntakeDeployer intakeDeployer) {
         this.intakeDeployer = intakeDeployer;
+        this.addRequirements(intakeDeployer);
     }
 
     @Override
-    public void initialize() {
+    public void execute() {
         intakeDeployer.runToExtendedPosition();
     }
 
