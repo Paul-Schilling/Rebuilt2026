@@ -76,6 +76,6 @@ public class Constants {
         public static final AprilTagFieldLayout tagLayout =
                 AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
         public static final Transform3d robotToCam = new Transform3d(distanceToFrontX, distanceFromLeftY, distanceFromFloorZ, new Rotation3d(0,0,0));
-        public static final boolean useVision = false;
+        public static final boolean useVision = true;
     }
 }

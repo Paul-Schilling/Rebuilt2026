@@ -80,7 +80,9 @@ public class RobotContainer {
     }
 
     private void registerCommands() {
-        NamedCommands.registerCommand("FireShooter",new Feed(feeder).alongWith(new RollerCommand(rollers)));
+        NamedCommands.registerCommand("FireShooter",new Feed(feeder)
+        .alongWith(new RollerCommand(rollers))
+        .withTimeout(3.0));
 
     }
 
