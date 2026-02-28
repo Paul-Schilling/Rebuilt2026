@@ -1,21 +1,51 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase{
-    private SparkFlex leftMotor;
-    private SparkFlex rightMotor;
+    private SparkFlex motor1;
+    private SparkFlex motor2;
 
     public Shooter() {
-        // Initialize leftMotor and rightMotor using new. See https://github.com/Team2667/Reefscape/blob/main/src/main/java/frc/robot/subsystems/swerveSupport/SwerveModule.java#L39
-        // as an example. The Can Ids are found in Constants.java.
+        motor1 = new SparkFlex(motor1CanId, MotorType.kBrushless);
+        motor1.configure(createConfigurationForVelocity(false), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor2 = new SparkFlex(motor2CanId, MotorType.kBrushless);
+        motor2.configure(createConfigurationForVelocity(true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void start() {
-        // the purpose of this method is to run the motor at a constant speed. Eventually, we will want to use
-        // PID to do this. For a first draft, just use the set method.
+        motor1.getClosedLoopController().setSetpoint(setPoint, ControlType.kVelocity, ClosedLoopSlot.kSlot0, kFF);
+        motor2.getClosedLoopController().setSetpoint(setPoint, ControlType.kVelocity, ClosedLoopSlot.kSlot0, kFF);
+    }
+
+    public void stop() {
+        motor1.stopMotor();
+        motor2.stopMotor();
+    }
+
+    private SparkFlexConfig createConfigurationForVelocity(boolean isInverted){
+        var motorConfig = new SparkFlexConfig();
+        motorConfig.closedLoop.pid(kP, kI, kD);
+        motorConfig.closedLoop.maxOutput(1.0);
+        motorConfig.closedLoop.minOutput(-1.0);
+        motorConfig.inverted(isInverted);
+        motorConfig.closedLoop.iMaxAccum(kMaxI);
+        return motorConfig;
+    }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Shooter Motor 1 Velocity", motor1.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Shooter Motor 2 Velocity", motor2.getEncoder().getVelocity());
     }
 }

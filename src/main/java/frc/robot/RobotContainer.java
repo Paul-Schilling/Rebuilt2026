@@ -10,8 +10,11 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,9 +22,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.Feed;
+import frc.robot.commands.RollerCommand;
+import frc.robot.commands.ShooterDefaultCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeDeployerDefaultCommand;
+import frc.robot.commands.IntakeExtend;
+import frc.robot.commands.IntakeRetract;
+import frc.robot.commands.ResetManualIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeDeployer;
+import frc.robot.subsystems.Rollers;
+import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -38,21 +54,45 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController driveTrainController = new CommandXboxController(0);
+    private final CommandXboxController shooterController = new CommandXboxController(1);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    public CommandSwerveDrivetrain drivetrain;
+    private Shooter shooter;
+    private Feeder feeder;
+    private Rollers rollers;
+    private Intake intake;
+    private IntakeDeployer intakeDeployer;
+
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        drivetrain = TunerConstants.createDrivetrain();
+        InitializeSubsystems();
+        registerCommands();
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
-
         configureBindings();
 
         // Warmup PathPlanner to avoid Java pauses
         FollowPathCommand.warmupCommand().schedule();
+    }
+
+    private void registerCommands() {
+        NamedCommands.registerCommand("FireShooter",getFireCommand().withTimeout(3.0));
+
+    }
+
+    private Command getFireCommand() {
+        return new Feed(feeder).alongWith(new RollerCommand(rollers));
+    }
+
+    private Command getToMiddleShootPose() {
+        Command command = AutoBuilder.pathfindToPoseFlipped(new Pose2d(2.271, 3.991, new Rotation2d(Math.toRadians(180.000))), PathConstraints.unlimitedConstraints(12.0));
+        return command.andThen(getFireCommand().withTimeout(2.0));
     }
 
     private void configureBindings() {
@@ -61,9 +101,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-driveTrainController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driveTrainController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driveTrainController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -74,33 +114,78 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        driveTrainController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        driveTrainController.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-driveTrainController.getLeftY(), -driveTrainController.getLeftX()))
         ));
 
-        joystick.povUp().whileTrue(drivetrain.applyRequest(() ->
+        driveTrainController.povUp().whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
-        joystick.povDown().whileTrue(drivetrain.applyRequest(() ->
+        driveTrainController.povDown().whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         );
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        driveTrainController.back().and(driveTrainController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driveTrainController.back().and(driveTrainController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driveTrainController.start().and(driveTrainController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driveTrainController.start().and(driveTrainController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driveTrainController.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
-        /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
+    }
+
+    private void InitializeSubsystems() {
+        try {
+            shooter = new Shooter();
+            ShooterDefaultCommand shooterCmd = new ShooterDefaultCommand(shooter);
+            shooter.setDefaultCommand(shooterCmd);
+        } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        try {
+            feeder = new Feeder();
+        } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        try {
+            rollers = new Rollers();
+        } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        try {
+            intake = new Intake();
+        } catch(Throwable error) {
+            System.out.println(error.getMessage());
+        }
+        try {
+            intakeDeployer = new IntakeDeployer();  
+            intakeDeployer.setDefaultCommand(new IntakeDeployerDefaultCommand(intakeDeployer, shooterController));
+            shooterController.rightBumper().onTrue(new IntakeExtend(intakeDeployer));
+            shooterController.leftBumper().onTrue(new IntakeRetract(intakeDeployer));
+            shooterController.leftStick().onTrue(new ResetManualIntake(intakeDeployer));
+        } catch(Throwable error){
+            System.out.println(error.getMessage());
+        }
+        if (rollers != null && feeder != null) {
+            shooterController.leftTrigger().whileTrue(new Feed(feeder).alongWith(new RollerCommand(rollers)));
+            shooterController.y().onTrue(new Feed(feeder).alongWith(new RollerCommand(rollers)).withTimeout(3));
+        } 
+        if (intake != null && rollers != null) {
+            IntakeCommand intakeCmd = new IntakeCommand(intake);
+            RollerCommand rollerCmd = new RollerCommand(rollers);
+            shooterController.rightTrigger().whileTrue(intakeCmd.alongWith(rollerCmd));
+            shooterController.y().onTrue(getToMiddleShootPose());
+        }
+
+
     }
 }
