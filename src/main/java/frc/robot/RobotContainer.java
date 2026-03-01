@@ -20,6 +20,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -34,6 +36,7 @@ import frc.robot.commands.IntakeDeployerDefaultCommand;
 import frc.robot.commands.IntakeExtend;
 import frc.robot.commands.IntakeRetract;
 import frc.robot.commands.ResetManualIntake;
+import frc.robot.commands.SaveConstantsNetworkTablesCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -78,10 +81,75 @@ public class RobotContainer {
         registerCommands();
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
+        // Publish current constants into NetworkTables so Shuffleboard widgets can edit them
+        publishConstantsToNetworkTables();
+        // Add Shuffleboard button to save current NetworkTables constants to disk
+        SmartDashboard.putData("Save Constants", new SaveConstantsNetworkTablesCommand());
         configureBindings();
 
         // Warmup PathPlanner to avoid Java pauses
         FollowPathCommand.warmupCommand().schedule();
+    }
+
+    private void publishConstantsToNetworkTables() {
+        var inst = NetworkTableInstance.getDefault();
+        NetworkTable ct = inst.getTable("Constants");
+
+        // Shooter
+        ct.getEntry(ConstantsKeys.SHOOTER_MOTOR1).setDouble(ConstantValues.ShooterConstants.motor1CanId);
+        ct.getEntry(ConstantsKeys.SHOOTER_MOTOR2).setDouble(ConstantValues.ShooterConstants.motor2CanId);
+        ct.getEntry(ConstantsKeys.SHOOTER_KP).setDouble(ConstantValues.ShooterConstants.kP);
+        ct.getEntry(ConstantsKeys.SHOOTER_KI).setDouble(ConstantValues.ShooterConstants.kI);
+        ct.getEntry(ConstantsKeys.SHOOTER_KD).setDouble(ConstantValues.ShooterConstants.kD);
+        ct.getEntry(ConstantsKeys.SHOOTER_KFF).setDouble(ConstantValues.ShooterConstants.kFF);
+        ct.getEntry(ConstantsKeys.SHOOTER_SETPOINT).setDouble(ConstantValues.ShooterConstants.setPoint);
+        ct.getEntry(ConstantsKeys.SHOOTER_KMAXI).setDouble(ConstantValues.ShooterConstants.kMaxI);
+
+        // Feeder
+        ct.getEntry(ConstantsKeys.FEEDER_MOTOR1).setDouble(ConstantValues.FeederConstants.motor1CanId);
+        ct.getEntry(ConstantsKeys.FEEDER_KP).setDouble(ConstantValues.FeederConstants.kP);
+        ct.getEntry(ConstantsKeys.FEEDER_KI).setDouble(ConstantValues.FeederConstants.kI);
+        ct.getEntry(ConstantsKeys.FEEDER_KD).setDouble(ConstantValues.FeederConstants.kD);
+        ct.getEntry(ConstantsKeys.FEEDER_KFF).setDouble(ConstantValues.FeederConstants.kFF);
+        ct.getEntry(ConstantsKeys.FEEDER_SETPOINT).setDouble(ConstantValues.FeederConstants.setPoint);
+
+        // Roller
+        ct.getEntry(ConstantsKeys.ROLLER_ID).setDouble(ConstantValues.RollerConstants.rollerCanId);
+        ct.getEntry(ConstantsKeys.ROLLER_KP).setDouble(ConstantValues.RollerConstants.kP);
+        ct.getEntry(ConstantsKeys.ROLLER_KI).setDouble(ConstantValues.RollerConstants.kI);
+        ct.getEntry(ConstantsKeys.ROLLER_KD).setDouble(ConstantValues.RollerConstants.kD);
+        ct.getEntry(ConstantsKeys.ROLLER_KFF).setDouble(ConstantValues.RollerConstants.kFF);
+        ct.getEntry(ConstantsKeys.ROLLER_SETPOINT).setDouble(ConstantValues.RollerConstants.setPoint);
+
+        // Intake
+        ct.getEntry(ConstantsKeys.INTAKE_MOTOR_ID).setDouble(ConstantValues.IntakeConstants.intakeCanId);
+        ct.getEntry(ConstantsKeys.INTAKE_KP).setDouble(ConstantValues.IntakeConstants.kP);
+        ct.getEntry(ConstantsKeys.INTAKE_KI).setDouble(ConstantValues.IntakeConstants.kI);
+        ct.getEntry(ConstantsKeys.INTAKE_KD).setDouble(ConstantValues.IntakeConstants.kD);
+        ct.getEntry(ConstantsKeys.INTAKE_KFF).setDouble(ConstantValues.IntakeConstants.kFF);
+        ct.getEntry(ConstantsKeys.INTAKE_SETPOINT).setDouble(ConstantValues.IntakeConstants.setPoint);
+
+        // IntakeDeployer
+        ct.getEntry(ConstantsKeys.DEPLOYER_ID).setDouble(ConstantValues.IntakeDeployerConstants.deployerCanId);
+        ct.getEntry(ConstantsKeys.DEPLOYER_KP).setDouble(ConstantValues.IntakeDeployerConstants.kP);
+        ct.getEntry(ConstantsKeys.DEPLOYER_KI).setDouble(ConstantValues.IntakeDeployerConstants.kI);
+        ct.getEntry(ConstantsKeys.DEPLOYER_KD).setDouble(ConstantValues.IntakeDeployerConstants.kD);
+        ct.getEntry(ConstantsKeys.DEPLOYER_UP).setDouble(ConstantValues.IntakeDeployerConstants.upSetPoint);
+        ct.getEntry(ConstantsKeys.DEPLOYER_DOWN).setDouble(ConstantValues.IntakeDeployerConstants.downSetPoint);
+        ct.getEntry(ConstantsKeys.DEPLOYER_KG).setDouble(ConstantValues.IntakeDeployerConstants.kG);
+        ct.getEntry(ConstantsKeys.DEPLOYER_KV).setDouble(ConstantValues.IntakeDeployerConstants.kV);
+        ct.getEntry(ConstantsKeys.DEPLOYER_KA).setDouble(ConstantValues.IntakeDeployerConstants.kA);
+        ct.getEntry(ConstantsKeys.DEPLOYER_EXTENDED).setDouble(ConstantValues.IntakeDeployerConstants.extendedLimit);
+        ct.getEntry(ConstantsKeys.DEPLOYER_RETRACT).setDouble(ConstantValues.IntakeDeployerConstants.retractLimit);
+        ct.getEntry(ConstantsKeys.DEPLOYER_EXT_SPEED).setDouble(ConstantValues.IntakeDeployerConstants.extendSpeed);
+        ct.getEntry(ConstantsKeys.DEPLOYER_RET_SPEED).setDouble(ConstantValues.IntakeDeployerConstants.retractSpeed);
+
+        // Vision
+        ct.getEntry(ConstantsKeys.VISION_DIST_FRONT).setDouble(ConstantValues.Vision.distanceToFrontX);
+        ct.getEntry(ConstantsKeys.VISION_DIST_LEFT).setDouble(ConstantValues.Vision.distanceFromLeftY);
+        ct.getEntry(ConstantsKeys.VISION_DIST_FLOOR).setDouble(ConstantValues.Vision.distanceFromFloorZ);
+        ct.getEntry(ConstantsKeys.VISION_CAMERA_NAME).setString(ConstantValues.Vision.cameraName);
+        ct.getEntry(ConstantsKeys.VISION_USE).setBoolean(ConstantValues.Vision.useVision);
     }
 
     private void registerCommands() {
