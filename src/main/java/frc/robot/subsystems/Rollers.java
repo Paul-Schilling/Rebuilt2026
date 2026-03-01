@@ -33,7 +33,7 @@ public class Rollers extends SubsystemBase {
     }
 
     public void start() {
-        rollerMotor.set(0.3);
+        rollerMotor.set(0.5);
     }
 
     public void startAtVelocity() {

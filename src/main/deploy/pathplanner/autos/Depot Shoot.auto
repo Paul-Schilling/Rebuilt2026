@@ -9,6 +9,12 @@
           "data": {
             "pathName": "basic move to shoot L-Side"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FireShooter"
+          }
         }
       ]
     }

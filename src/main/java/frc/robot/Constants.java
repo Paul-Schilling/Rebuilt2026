@@ -24,7 +24,7 @@ public class Constants {
 
     public class FeederConstants {
         public static int motor1CanId = 25;
-        //public static int motor2CanId = 26;
+        public static int motor2CanId = 26;
 
         public static double kP = 0.0005;
         public static double kI = 0.00000005;
@@ -69,9 +69,9 @@ public class Constants {
         public static double retractSpeed = 0.1;
     }
     public class Vision {
-        private static final double distanceToFrontX = 0.38;
-        private static final double distanceFromLeftY = 0.39;
-        private static final double distanceFromFloorZ = 0.85;
+        private static final double distanceToFrontX = -0.08;
+        private static final double distanceFromLeftY = 0.0;
+        private static final double distanceFromFloorZ = 0.57;
         public static final String cameraName = "PC_Camera";
         public static final AprilTagFieldLayout tagLayout =
                 AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
