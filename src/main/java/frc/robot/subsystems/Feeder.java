@@ -11,9 +11,9 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.FeederConstants.*;
-import static frc.robot.Constants.IntakeDeployerConstants.kV;
-import static frc.robot.Constants.*;
+import static frc.robot.ConstantValues.FeederConstants.*;
+import static frc.robot.ConstantValues.IntakeDeployerConstants.kV;
+import static frc.robot.ConstantValues.*;
 
 public class Feeder extends SubsystemBase{
     

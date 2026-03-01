@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
         m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
 
-        if (Constants.Vision.useVision){
+        if (ConstantValues.Vision.useVision){
             vision.periodic();
         }
     }

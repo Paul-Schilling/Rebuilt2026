@@ -1,0 +1,58 @@
+{
+  "ShooterConstants": {
+    "motor1CanId": 21,
+    "motor2CanId": 22,
+    "kP": 0.0005,
+    "kI": 0.0000005,
+    "kD": 0.0,
+    "kFF": 5.20,
+    "setPoint": 3000.0,
+    "kMaxI": 100.0
+  },
+  "FeederConstants": {
+    "motor1CanId": 25,
+    "kP": 0.0005,
+    "kI": 0.00000005,
+    "kD": 0.0,
+    "kFF": 5.0,
+    "setPoint": 4000.0
+  },
+  "RollerConstants": {
+    "rollerCanId": 27,
+    "kP": 0.0,
+    "kI": 0.0,
+    "kD": 0.0,
+    "kFF": 0.00015,
+    "setPoint": 3000.0
+  },
+  "IntakeConstants": {
+    "intakeCanId": 28,
+    "kP": 0.0,
+    "kI": 0.0,
+    "kD": 0.0,
+    "kFF": 20,
+    "setPoint": 3000.0
+  },
+  "IntakeDeployerConstants": {
+    "deployerCanId": 30,
+    "kP": 2.16,
+    "kI": 0.0,
+    "kD": 0.01,
+    "upSetPoint": 0.074,
+    "downSetPoint": 0.388,
+    "kG": 0.16,
+    "kV": 6.33,
+    "kA": 0.02,
+    "extendedLimit": 0.32,
+    "retractLimit": 0.01,
+    "extendSpeed": -0.1,
+    "retractSpeed": 0.1
+  },
+  "Vision": {
+    "distanceToFrontX": 0.38,
+    "distanceFromLeftY": 0.39,
+    "distanceFromFloorZ": 0.85,
+    "cameraName": "PC_Camera",
+    "useVision": true
+  }
+}

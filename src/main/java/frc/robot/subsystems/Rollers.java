@@ -10,7 +10,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.RollerConstants.*;
+import static frc.robot.ConstantValues.RollerConstants.*;
 
 public class Rollers extends SubsystemBase {
     private SparkFlex rollerMotor;

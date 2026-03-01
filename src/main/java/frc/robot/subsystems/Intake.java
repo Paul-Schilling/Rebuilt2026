@@ -10,7 +10,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.ConstantValues.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
     private SparkFlex intakeMotor;

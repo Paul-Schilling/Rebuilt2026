@@ -24,7 +24,7 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.Vision.*;
+import static frc.robot.ConstantValues.Vision.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import java.util.Optional;
