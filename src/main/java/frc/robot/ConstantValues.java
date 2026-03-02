@@ -27,6 +27,8 @@ public class ConstantValues {
 
     public static class FeederConstants {
         public static final int motor1CanId = ConstantsLoader.getInt(feederConst, "motor1CanId", 25);
+        // secondary feeder motor ID (was accidentally removed/commented out)
+        public static final int motor2CanId = ConstantsLoader.getInt(feederConst, "motor2CanId", 26);
         public static final double kP = ConstantsLoader.getDouble(feederConst, "kP", 0.0005);
         public static final double kI = ConstantsLoader.getDouble(feederConst, "kI", 0.00000005);
         public static final double kD = ConstantsLoader.getDouble(feederConst, "kD", 0.0);

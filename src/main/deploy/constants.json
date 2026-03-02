@@ -11,12 +11,13 @@
   },
   "FeederConstants": {
     "motor1CanId": 25,
+    "motor2CanId": 26,
     "kP": 0.0005,
     "kI": 0.00000005,
     "kD": 0.0,
     "kFF": 5.0,
     "setPoint": 4000.0
-  },
+  }
   "RollerConstants": {
     "rollerCanId": 27,
     "kP": 0.0,

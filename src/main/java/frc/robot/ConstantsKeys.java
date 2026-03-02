@@ -17,6 +17,7 @@ public final class ConstantsKeys {
 
     // Feeder
     public static final String FEEDER_MOTOR1 = "Feeder/motor1CanId";
+    public static final String FEEDER_MOTOR2 = "Feeder/motor2CanId";
     public static final String FEEDER_KP = "Feeder/kP";
     public static final String FEEDER_KI = "Feeder/kI";
     public static final String FEEDER_KD = "Feeder/kD";

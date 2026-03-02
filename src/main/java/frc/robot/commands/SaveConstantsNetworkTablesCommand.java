@@ -53,6 +53,7 @@ public class SaveConstantsNetworkTablesCommand extends InstantCommand {
 
             // Feeder
             cfg.FeederConstants.motor1CanId = getIntOr(ct, ConstantsKeys.FEEDER_MOTOR1, cfg.FeederConstants.motor1CanId);
+            cfg.FeederConstants.motor2CanId = getIntOr(ct, ConstantsKeys.FEEDER_MOTOR2, cfg.FeederConstants.motor2CanId);
             cfg.FeederConstants.kP = getDoubleOr(ct, ConstantsKeys.FEEDER_KP, cfg.FeederConstants.kP);
             cfg.FeederConstants.kI = getDoubleOr(ct, ConstantsKeys.FEEDER_KI, cfg.FeederConstants.kI);
             cfg.FeederConstants.kD = getDoubleOr(ct, ConstantsKeys.FEEDER_KD, cfg.FeederConstants.kD);

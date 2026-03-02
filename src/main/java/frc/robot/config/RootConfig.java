@@ -21,6 +21,8 @@ public class RootConfig {
 
     public static class FeederConfig {
         public int motor1CanId = 25;
+        // extra motor for two‑motor feeder
+        public int motor2CanId = 26;
         public double kP = 0.0005;
         public double kI = 0.00000005;
         public double kD = 0.0;
