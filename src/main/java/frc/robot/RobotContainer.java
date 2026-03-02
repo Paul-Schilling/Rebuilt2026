@@ -31,6 +31,8 @@ import frc.robot.ConstantValues.ShooterConstants;
 import frc.robot.commands.Feed;
 import frc.robot.commands.RollerCommand;
 import frc.robot.commands.ShooterDefaultCommand;
+import frc.robot.commands.DriveToHubTangentCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeDeployerDefaultCommand;
 import frc.robot.commands.IntakeExtend;
@@ -259,7 +261,13 @@ public class RobotContainer {
             System.out.println(error.getMessage());
         }
         if (rollers != null && feeder != null) {
-            shooterController.leftTrigger().whileTrue(new Feed(feeder).alongWith(new RollerCommand(rollers)));
+            // drive to a position on the hub circle, then feed while trigger held
+            shooterController.leftTrigger().whileTrue(
+                new SequentialCommandGroup(
+                    new DriveToHubTangentCommand(drivetrain),
+                    new Feed(feeder).alongWith(new RollerCommand(rollers))
+                )
+            );
             shooterController.y().onTrue(new Feed(feeder).alongWith(new RollerCommand(rollers)).withTimeout(3));
         } 
         if (intake != null && rollers != null) {

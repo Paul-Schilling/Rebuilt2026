@@ -17,7 +17,16 @@
     "kD": 0.0,
     "kFF": 5.0,
     "setPoint": 4000.0
-  }
+  },
+  "HubConstants": {
+    "fieldLength": 16.541,
+    "hubX": 4.6228,
+    "hubY": 4.034536,
+    "radius": 2.286,
+    "positionTolerance": 0.05,
+    "headingTolerance": 0.05,
+    "tangentAngleDeg": 90.0
+  },
   "RollerConstants": {
     "rollerCanId": 27,
     "kP": 0.0,

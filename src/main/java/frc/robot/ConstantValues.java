@@ -13,6 +13,7 @@ public class ConstantValues {
     private static final JsonObject intakeConst = ConstantsLoader.getIntakeConstants();
     private static final JsonObject intakeDeployerConst = ConstantsLoader.getIntakeDeployerConstants();
     private static final JsonObject visionConst = ConstantsLoader.getVisionConstants();
+    private static final JsonObject hubConst = ConstantsLoader.getHubConstants();
 
     public static class ShooterConstants {
         public static final int motor1CanId = ConstantsLoader.getInt(shooterConst, "motor1CanId", 21);
@@ -78,5 +79,15 @@ public class ConstantValues {
         public static final boolean useVision = ConstantsLoader.getBoolean(visionConst, "useVision", true);
         public static final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
         public static final Transform3d robotToCam = new Transform3d(distanceToFrontX, distanceFromLeftY, distanceFromFloorZ, new Rotation3d(0,0,0));
+    }
+
+    public static class HubConstants {
+        public static final double fieldLength = ConstantsLoader.getDouble(hubConst, "fieldLength", 16.541);
+        public static final double hubX = ConstantsLoader.getDouble(hubConst, "hubX", 4.6228);
+        public static final double hubY = ConstantsLoader.getDouble(hubConst, "hubY", 4.034536);
+        public static final double radius = ConstantsLoader.getDouble(hubConst, "radius", 2.286);
+        public static final double positionTolerance = ConstantsLoader.getDouble(hubConst, "positionTolerance", 0.05);
+        public static final double headingTolerance = ConstantsLoader.getDouble(hubConst, "headingTolerance", 0.05);
+        public static final double tangentAngleDeg = ConstantsLoader.getDouble(hubConst, "tangentAngleDeg", 90.0);
     }
 }

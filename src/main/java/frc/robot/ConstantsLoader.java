@@ -49,6 +49,10 @@ public class ConstantsLoader {
         return constants.getAsJsonObject("Vision");
     }
 
+    public static JsonObject getHubConstants() {
+        return constants.getAsJsonObject("HubConstants");
+    }
+
     // Helper method to safely get Double values
     public static double getDouble(JsonObject obj, String key, double defaultValue) {
         if (obj.has(key)) {

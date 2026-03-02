@@ -7,6 +7,7 @@ public class RootConfig {
     public IntakeConfig IntakeConstants = new IntakeConfig();
     public IntakeDeployerConfig IntakeDeployerConstants = new IntakeDeployerConfig();
     public VisionConfig Vision = new VisionConfig();
+    public HubConfig HubConstants = new HubConfig();
 
     public static class ShooterConfig {
         public int motor1CanId = 21;
@@ -70,5 +71,15 @@ public class RootConfig {
         public double distanceFromFloorZ = 0.85;
         public String cameraName = "PC_Camera";
         public boolean useVision = true;
+    }
+
+    public static class HubConfig {
+        public double fieldLength = 16.541;
+        public double hubX = 4.6228;
+        public double hubY = 4.034536;
+        public double radius = 2.286;
+        public double positionTolerance = 0.05;
+        public double headingTolerance = 0.05;
+        public double tangentAngleDeg = 90.0;
     }
 }
