@@ -21,6 +21,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -85,7 +86,9 @@ public class RobotContainer {
 
     private void registerCommands() {
         NamedCommands.registerCommand("FireShooter",getFireCommand().withTimeout(3.0));
-
+        NamedCommands.registerCommand("DeployIntake", new IntakeExtend(intakeDeployer));
+        NamedCommands.registerCommand("runIntake", new IntakeCommand(intake));
+        NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
     }
 
     private Command getFireCommand() {
