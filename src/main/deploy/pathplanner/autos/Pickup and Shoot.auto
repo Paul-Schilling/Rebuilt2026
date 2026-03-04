@@ -19,19 +19,31 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "parallel",
+                      "type": "path",
+                      "data": {
+                        "pathName": "move to pickup 1"
+                      }
+                    },
+                    {
+                      "type": "deadline",
                       "data": {
                         "commands": [
                           {
-                            "type": "named",
+                            "type": "wait",
                             "data": {
-                              "name": "runIntake"
+                              "waitTime": 3.0
                             }
                           },
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "move to pickup"
+                              "pathName": "move to pickup 2"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "runIntake"
                             }
                           }
                         ]
@@ -42,14 +54,14 @@
                       "data": {
                         "pathName": "move to score"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FireShooter"
+                      }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FireShooter"
                 }
               }
             ]
