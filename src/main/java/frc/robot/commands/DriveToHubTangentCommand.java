@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import static frc.robot.ConstantValues.HubConstants.*;
 
@@ -19,49 +18,44 @@ import static frc.robot.ConstantValues.HubConstants.*;
  * The target is computed when the command initializes, using the drivetrain's
  * current pose and the current alliance color.
  */
-public class DriveToHubTangentCommand extends Command {
-    private final CommandSwerveDrivetrain drivetrain;
-    private Pose2d goal;
+public class DriveToHubTangentCommand extends edu.wpi.first.wpilibj2.command.SequentialCommandGroup {
+    /**
+     * A placeholder to hold the goal between the two steps of the group.
+     * Using an array/AtomicReference allows us to mutate the value inside the
+     * lambdas passed to {@code InstantCommand}.
+     */
+    private final java.util.concurrent.atomic.AtomicReference<Pose2d> goalRef =
+            new java.util.concurrent.atomic.AtomicReference<>();
 
     public DriveToHubTangentCommand(CommandSwerveDrivetrain drivetrain) {
-        this.drivetrain = drivetrain;
+        // the drivetrain is required by both steps (the second step actually
+        // schedules a command that also requires it), so we declare the
+        // requirement here on the group itself.
         addRequirements(drivetrain);
+
+        // first compute the goal
+        addCommands(
+                new edu.wpi.first.wpilibj2.command.InstantCommand(() -> {
+                    Pose2d current = drivetrain.getState().Pose;
+
+                    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+                    Translation2d centre =
+                            alliance == Alliance.Red
+                                    ? new Translation2d(hubX, hubY)
+                                    : new Translation2d(fieldLength - hubX, hubY);
+
+                    goalRef.set(computeClosestTangent(current, centre, radius));
+                }),
+                // then schedule the auto‑builder path using the previously computed
+                // pose.  scheduling a command with drivetrain requirements is safe
+                // because the previous instant command has already finished.
+                new edu.wpi.first.wpilibj2.command.InstantCommand(() ->
+                        AutoBuilder.pathfindToPoseFlipped(goalRef.get(),
+                                PathConstraints.unlimitedConstraints(3.0))
+                                  .schedule())
+        );
     }
 
-    @Override
-    public void initialize() {
-        Pose2d current = drivetrain.getState().Pose;
-
-        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-        Translation2d centre =
-                alliance == Alliance.Red
-                        ? new Translation2d(hubX, hubY)
-                        : new Translation2d(fieldLength - hubX, hubY);
-
-        goal = computeClosestTangent(current, centre, radius);
-
-        // schedule a short path to the pose; AutoBuilder will flip it for red/blue
-        AutoBuilder.pathfindToPoseFlipped(goal, PathConstraints.unlimitedConstraints(3.0))
-                  .schedule();
-    }
-
-    @Override
-    public boolean isFinished() {
-        // complete when the auto‑builder path has finished (it will cancel itself)
-        // we can detect that by asking whether the drivetrain is still running
-        // an AutoBuilder path.  Unfortunately there is no clean API, so just
-        // check distance + heading tolerance instead; the path should arrive
-        // within a few hundredths of a meter.
-        Pose2d now = drivetrain.getState().Pose;
-        return now.getTranslation().getDistance(goal.getTranslation()) < positionTolerance
-                && Math.abs(now.getRotation().minus(goal.getRotation()).getRadians()) < headingTolerance;
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        // nothing special; the path follower will bring the drivetrain to idle when
-        // it finishes.  leaving this override in case we want to do more later.
-    }
 
     private static Pose2d computeClosestTangent(Pose2d robot,
                                                  Translation2d centre,
